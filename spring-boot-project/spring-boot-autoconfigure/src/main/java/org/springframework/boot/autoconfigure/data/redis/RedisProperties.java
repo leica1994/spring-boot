@@ -52,6 +52,11 @@ public class RedisProperties {
 	private String host = "localhost";
 
 	/**
+	 * Login username of the redis server.
+	 */
+	private String username;
+
+	/**
 	 * Login password of the redis server.
 	 */
 	private String password;
@@ -67,9 +72,14 @@ public class RedisProperties {
 	private boolean ssl;
 
 	/**
-	 * Connection timeout.
+	 * Read timeout.
 	 */
 	private Duration timeout;
+
+	/**
+	 * Connection timeout.
+	 */
+	private Duration connectTimeout;
 
 	/**
 	 * Client name to be set on connections with CLIENT SETNAME.
@@ -113,6 +123,14 @@ public class RedisProperties {
 		this.host = host;
 	}
 
+	public String getUsername() {
+		return this.username;
+	}
+
+	public void setUsername(String username) {
+		this.username = username;
+	}
+
 	public String getPassword() {
 		return this.password;
 	}
@@ -143,6 +161,14 @@ public class RedisProperties {
 
 	public Duration getTimeout() {
 		return this.timeout;
+	}
+
+	public Duration getConnectTimeout() {
+		return this.connectTimeout;
+	}
+
+	public void setConnectTimeout(Duration connectTimeout) {
+		this.connectTimeout = connectTimeout;
 	}
 
 	public String getClientName() {

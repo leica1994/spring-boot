@@ -16,9 +16,6 @@
 
 package org.springframework.boot.autoconfigure.data.redis;
 
-import java.net.UnknownHostException;
-import java.time.Duration;
-
 import org.apache.commons.pool2.impl.GenericObjectPool;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPoolConfig;
@@ -27,6 +24,7 @@ import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.context.properties.PropertyMapper;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisClusterConfiguration;
@@ -58,7 +56,7 @@ class JedisConnectionConfiguration extends RedisConnectionConfiguration {
 
 	@Bean
 	JedisConnectionFactory redisConnectionFactory(
-			ObjectProvider<JedisClientConfigurationBuilderCustomizer> builderCustomizers) throws UnknownHostException {
+			ObjectProvider<JedisClientConfigurationBuilderCustomizer> builderCustomizers) {
 		return createJedisConnectionFactory(builderCustomizers);
 	}
 
@@ -89,16 +87,11 @@ class JedisConnectionConfiguration extends RedisConnectionConfiguration {
 	}
 
 	private JedisClientConfigurationBuilder applyProperties(JedisClientConfigurationBuilder builder) {
-		if (getProperties().isSsl()) {
-			builder.useSsl();
-		}
-		if (getProperties().getTimeout() != null) {
-			Duration timeout = getProperties().getTimeout();
-			builder.readTimeout(timeout).connectTimeout(timeout);
-		}
-		if (StringUtils.hasText(getProperties().getClientName())) {
-			builder.clientName(getProperties().getClientName());
-		}
+		PropertyMapper map = PropertyMapper.get().alwaysApplyingWhenNonNull();
+		map.from(getProperties().isSsl()).whenTrue().toCall(builder::useSsl);
+		map.from(getProperties().getTimeout()).to(builder::readTimeout);
+		map.from(getProperties().getConnectTimeout()).to(builder::connectTimeout);
+		map.from(getProperties().getClientName()).whenHasText().to(builder::clientName);
 		return builder;
 	}
 

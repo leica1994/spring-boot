@@ -151,7 +151,7 @@ If your application is a web application (Spring MVC, Spring WebFlux, or Jersey)
   Requires a dependency on `micrometer-registry-prometheus`.
 |===
 
-To learn more about the Actuator's endpoints and their request and response formats, please refer to the separate API documentation ({spring-boot-actuator-restapi}/html/[HTML] or {spring-boot-actuator-restapi}/pdf/spring-boot-actuator-web-api.pdf[PDF]).
+To learn more about the Actuator's endpoints and their request and response formats, please refer to the separate API documentation ({spring-boot-actuator-restapi-docs}[HTML] or {spring-boot-actuator-restapi-pdfdocs}[PDF]).
 
 
 
@@ -371,7 +371,7 @@ A typical Spring Security configuration might look something like the following 
 
 The preceding example uses `EndpointRequest.toAnyEndpoint()` to match a request to any endpoint and then ensures that all have the `ENDPOINT_ADMIN` role.
 Several other matcher methods are also available on `EndpointRequest`.
-See the API documentation ({spring-boot-actuator-restapi}/html[HTML] or {spring-boot-actuator-restapi}/pdf/spring-boot-actuator-web-api.pdf[PDF]) for details.
+See the API documentation ({spring-boot-actuator-restapi-docs}[HTML] or {spring-boot-actuator-restapi-pdfdocs}[PDF]) for details.
 
 If you deploy applications behind a firewall, you may prefer that all your actuator endpoints can be accessed without requiring authentication.
 You can do so by changing the configprop:management.endpoints.web.exposure.include[] property, as follows:
@@ -679,7 +679,7 @@ with the `key` listed in the table below.
 
 =======
 | `cassandra`
-| {spring-boot-actuator-module-code}/cassandra/CassandraHealthIndicator.java[`CassandraHealthIndicator`] or {spring-boot-actuator-module-code}/cassandra/CassandraDriverHealthIndicator.java[`CassandraDriverHealthIndicator`]
+| {spring-boot-actuator-module-code}/cassandra/CassandraDriverHealthIndicator.java[`CassandraDriverHealthIndicator`]
 | Checks that a Cassandra database is up.
 
 | `couchbase`
@@ -878,7 +878,7 @@ The following `ReactiveHealthIndicators` are auto-configured by Spring Boot when
 |===
 | Name | Description
 
-| {spring-boot-actuator-module-code}/cassandra/CassandraReactiveHealthIndicator.java[`CassandraReactiveHealthIndicator`] or {spring-boot-actuator-module-code}/cassandra/CassandraDriverReactiveHealthIndicator.java[`CassandraDriverReactiveHealthIndicator`]
+| {spring-boot-actuator-module-code}/cassandra/CassandraDriverReactiveHealthIndicator.java[`CassandraDriverReactiveHealthIndicator`]
 | Checks that a Cassandra database is up.
 
 | {spring-boot-actuator-module-code}/couchbase/CouchbaseReactiveHealthIndicator.java[`CouchbaseReactiveHealthIndicator`]
@@ -1199,7 +1199,7 @@ For example, `health` is exposed as `/actuator/health`.
 TIP: Actuator is supported natively with Spring MVC, Spring WebFlux, and Jersey.
 If both Jersey and Spring MVC are available, Spring MVC will be used.
 
-NOTE: Jackson is a required dependency in order to get the correct JSON responses as documented in the API documentation ({spring-boot-actuator-restapi}/html[HTML] or {spring-boot-actuator-restapi}/pdf/spring-boot-actuator-web-api.pdf[PDF]).
+NOTE: Jackson is a required dependency in order to get the correct JSON responses as documented in the API documentation ({spring-boot-actuator-restapi-docs}[HTML] or {spring-boot-actuator-restapi-pdfdocs}[PDF]).
 
 
 
@@ -1306,7 +1306,7 @@ If you do not want to expose endpoints over HTTP, you can set the management por
 	management.server.port=-1
 ----
 
-This can be achieved using the configprop:management.endpoints.web.exposure.exclude[] property as well, as shown in following example:
+This can be achieved using the configprop:management.endpoints.web.exposure.exclude[] property as well, as shown in the following example:
 
 [source,properties,indent=0,configprops]
 ----
@@ -1721,7 +1721,7 @@ You can also change the interval at which metrics are sent to New Relic:
 	management.metrics.export.newrelic.step=30s
 ----
 
-By default, metrics are published via REST calls but it also possible to use the Java Agent API if you have it on the classpath:
+By default, metrics are published via REST calls but it is also possible to use the Java Agent API if you have it on the classpath:
 
 [source,properties,indent=0,configprops]
 ----

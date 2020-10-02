@@ -17,6 +17,7 @@
 package org.springframework.boot.maven;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedHashSet;
@@ -128,6 +129,19 @@ class ArtifactsLibrariesTests {
 		verify(this.callback, times(2)).library(this.libraryCaptor.capture());
 		assertThat(this.libraryCaptor.getAllValues().get(0).getName()).isEqualTo("g1-artifact-1.0.jar");
 		assertThat(this.libraryCaptor.getAllValues().get(1).getName()).isEqualTo("g2-artifact-1.0.jar");
+	}
+
+	@Test
+	void libraryCoordinatesVersionUsesBaseVersionOfArtifact() throws IOException {
+		Artifact snapshotArtifact = mock(Artifact.class);
+		given(snapshotArtifact.getScope()).willReturn("compile");
+		given(snapshotArtifact.getArtifactId()).willReturn("artifact");
+		given(snapshotArtifact.getBaseVersion()).willReturn("1.0-SNAPSHOT");
+		given(snapshotArtifact.getFile()).willReturn(new File("a"));
+		given(snapshotArtifact.getArtifactHandler()).willReturn(this.artifactHandler);
+		this.artifacts = Collections.singleton(snapshotArtifact);
+		new ArtifactsLibraries(this.artifacts, null, mock(Log.class)).doWithLibraries(
+				(library) -> assertThat(library.getCoordinates().getVersion()).isEqualTo("1.0-SNAPSHOT"));
 	}
 
 }
