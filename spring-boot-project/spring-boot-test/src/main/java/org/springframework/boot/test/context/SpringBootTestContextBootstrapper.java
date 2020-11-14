@@ -46,6 +46,7 @@ import org.springframework.test.context.ContextHierarchy;
 import org.springframework.test.context.ContextLoader;
 import org.springframework.test.context.MergedContextConfiguration;
 import org.springframework.test.context.TestContext;
+import org.springframework.test.context.TestContextAnnotationUtils;
 import org.springframework.test.context.TestContextBootstrapper;
 import org.springframework.test.context.TestExecutionListener;
 import org.springframework.test.context.support.DefaultTestContextBootstrapper;
@@ -318,8 +319,7 @@ public class SpringBootTestContextBootstrapper extends DefaultTestContextBootstr
 	}
 
 	protected SpringBootTest getAnnotation(Class<?> testClass) {
-		return MergedAnnotations.from(testClass, SearchStrategy.INHERITED_ANNOTATIONS).get(SpringBootTest.class)
-				.synthesize(MergedAnnotation::isPresent).orElse(null);
+		return TestContextAnnotationUtils.findMergedAnnotation(testClass, SpringBootTest.class);
 	}
 
 	protected void verifyConfiguration(Class<?> testClass) {

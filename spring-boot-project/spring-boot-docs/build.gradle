@@ -46,6 +46,7 @@ plugins.withType(EclipsePlugin) {
 dependencies {
 	actuatorApiDocumentation(project(path: ":spring-boot-project:spring-boot-actuator-autoconfigure", configuration: "documentation"))
 
+	asciidoctorExtensions("io.spring.asciidoctor:spring-asciidoctor-extensions-block-switch")
 	asciidoctorExtensions("io.spring.asciidoctor:spring-asciidoctor-extensions-spring-boot")
 	asciidoctorExtensions(project(path: ":spring-boot-project:spring-boot-actuator-autoconfigure"))
 	asciidoctorExtensions(project(path: ":spring-boot-project:spring-boot-autoconfigure"))
@@ -81,6 +82,7 @@ dependencies {
 	implementation("org.springframework:spring-web")
 	implementation("org.springframework:spring-webflux")
 	implementation("org.springframework.data:spring-data-couchbase")
+	implementation("org.springframework.data:spring-data-neo4j")
 	implementation("org.springframework.data:spring-data-redis")
 	implementation("org.springframework.data:spring-data-r2dbc")
 	implementation("org.springframework.kafka:spring-kafka")

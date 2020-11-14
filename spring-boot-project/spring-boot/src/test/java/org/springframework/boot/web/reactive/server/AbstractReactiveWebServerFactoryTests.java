@@ -45,7 +45,6 @@ import org.awaitility.Awaitility;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import reactor.core.publisher.Mono;
-import reactor.core.publisher.MonoProcessor;
 import reactor.core.publisher.Sinks;
 import reactor.netty.NettyPipeline;
 import reactor.netty.http.client.HttpClient;
@@ -132,6 +131,7 @@ public abstract class AbstractReactiveWebServerFactoryTests {
 		Ssl ssl = new Ssl();
 		ssl.setKeyStore(keyStore);
 		ssl.setKeyPassword(keyPassword);
+		ssl.setKeyStorePassword("secret");
 		factory.setSsl(ssl);
 		this.webServer = factory.getWebServer(new EchoHandler());
 		this.webServer.start();
@@ -150,6 +150,7 @@ public abstract class AbstractReactiveWebServerFactoryTests {
 		AbstractReactiveWebServerFactory factory = getFactory();
 		Ssl ssl = new Ssl();
 		ssl.setKeyStore(keyStore);
+		ssl.setKeyStorePassword("secret");
 		ssl.setKeyPassword(keyPassword);
 		ssl.setKeyAlias("test-alias");
 		factory.setSsl(ssl);
@@ -197,6 +198,7 @@ public abstract class AbstractReactiveWebServerFactoryTests {
 		ssl.setClientAuth(Ssl.ClientAuth.WANT);
 		ssl.setKeyStore("classpath:test.jks");
 		ssl.setKeyPassword("password");
+		ssl.setKeyStorePassword("secret");
 		ssl.setTrustStore("classpath:test.jks");
 		testClientAuthSuccess(ssl, buildTrustAllSslWithClientKeyConnector());
 	}
@@ -208,6 +210,7 @@ public abstract class AbstractReactiveWebServerFactoryTests {
 		ssl.setKeyStore("classpath:test.jks");
 		ssl.setKeyPassword("password");
 		ssl.setTrustStore("classpath:test.jks");
+		ssl.setKeyStorePassword("secret");
 		testClientAuthSuccess(ssl, buildTrustAllSslConnector());
 	}
 
@@ -241,6 +244,7 @@ public abstract class AbstractReactiveWebServerFactoryTests {
 		Ssl ssl = new Ssl();
 		ssl.setClientAuth(Ssl.ClientAuth.NEED);
 		ssl.setKeyStore("classpath:test.jks");
+		ssl.setKeyStorePassword("secret");
 		ssl.setKeyPassword("password");
 		ssl.setTrustStore("classpath:test.jks");
 		testClientAuthSuccess(ssl, buildTrustAllSslWithClientKeyConnector());
@@ -251,6 +255,7 @@ public abstract class AbstractReactiveWebServerFactoryTests {
 		Ssl ssl = new Ssl();
 		ssl.setClientAuth(Ssl.ClientAuth.NEED);
 		ssl.setKeyStore("classpath:test.jks");
+		ssl.setKeyStorePassword("secret");
 		ssl.setKeyPassword("password");
 		ssl.setTrustStore("classpath:test.jks");
 		testClientAuthFailure(ssl, buildTrustAllSslConnector());
@@ -499,7 +504,7 @@ public abstract class AbstractReactiveWebServerFactoryTests {
 
 	protected static class BlockingHandler implements HttpHandler {
 
-		private final BlockingQueue<MonoProcessor<Void>> processors = new ArrayBlockingQueue<>(10);
+		private final BlockingQueue<Sinks.Empty<Void>> processors = new ArrayBlockingQueue<>(10);
 
 		private volatile boolean blocking = true;
 
@@ -510,8 +515,8 @@ public abstract class AbstractReactiveWebServerFactoryTests {
 		@Override
 		public Mono<Void> handle(ServerHttpRequest request, ServerHttpResponse response) {
 			if (this.blocking) {
-				Sinks.One<Void> completion = Sinks.one();
-				this.processors.add(MonoProcessor.fromSink(completion));
+				Sinks.Empty<Void> completion = Sinks.empty();
+				this.processors.add(completion);
 				return completion.asMono().then(Mono.empty());
 			}
 			return Mono.empty();
@@ -519,8 +524,8 @@ public abstract class AbstractReactiveWebServerFactoryTests {
 
 		public void completeOne() {
 			try {
-				MonoProcessor<Void> processor = this.processors.take();
-				processor.onComplete();
+				Sinks.Empty<Void> processor = this.processors.take();
+				processor.tryEmitEmpty();
 			}
 			catch (InterruptedException ex) {
 				Thread.currentThread().interrupt();
@@ -535,7 +540,7 @@ public abstract class AbstractReactiveWebServerFactoryTests {
 
 		public void stopBlocking() {
 			this.blocking = false;
-			this.processors.forEach(MonoProcessor::onComplete);
+			this.processors.forEach(Sinks.Empty::tryEmitEmpty);
 		}
 
 	}

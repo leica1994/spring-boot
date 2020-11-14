@@ -21,6 +21,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -172,6 +173,9 @@ public class FlywayAutoConfiguration {
 			map.from(locations).to(configuration::locations);
 			map.from(properties.getEncoding()).to(configuration::encoding);
 			map.from(properties.getConnectRetries()).to(configuration::connectRetries);
+			// No method reference for compatibility with Flyway 6.x
+			map.from(properties.getLockRetryCount())
+					.to((lockRetryCount) -> configuration.lockRetryCount(lockRetryCount));
 			// No method reference for compatibility with Flyway 5.x
 			map.from(properties.getDefaultSchema()).to((schema) -> configuration.defaultSchema(schema));
 			map.from(properties.getSchemas()).as(StringUtils::toStringArray).to(configuration::schemas);
@@ -220,6 +224,23 @@ public class FlywayAutoConfiguration {
 					.to((oracleSqlplusWarn) -> configuration.oracleSqlplusWarn(oracleSqlplusWarn));
 			map.from(properties.getStream()).whenNonNull().to(configuration::stream);
 			map.from(properties.getUndoSqlMigrationPrefix()).whenNonNull().to(configuration::undoSqlMigrationPrefix);
+			// No method reference for compatibility with Flyway 6.x
+			map.from(properties.getCherryPick()).whenNonNull().to((cherryPick) -> configuration.cherryPick(cherryPick));
+			// No method reference for compatibility with Flyway 6.x
+			map.from(properties.getJdbcProperties()).whenNot(Map::isEmpty)
+					.to((jdbcProperties) -> configuration.jdbcProperties(jdbcProperties));
+			// No method reference for compatibility with Flyway 6.x
+			map.from(properties.getOracleKerberosCacheFile()).whenNonNull()
+					.to((cacheFile) -> configuration.orackeKerberosCacheFile(cacheFile));
+			// No method reference for compatibility with Flyway 6.x
+			map.from(properties.getOracleKerberosConfigFile()).whenNonNull()
+					.to((configFile) -> configuration.orackeKerberosConfigFile(configFile));
+			// No method reference for compatibility with Flyway 6.x
+			map.from(properties.getOutputQueryResults()).whenNonNull()
+					.to((outputQueryResults) -> configuration.outputQueryResults(outputQueryResults));
+			// No method reference for compatibility with Flyway 6.x
+			map.from(properties.getSkipExecutingMigrations()).whenNonNull()
+					.to((skipExecutingMigrations) -> configuration.skipExecutingMigrations(skipExecutingMigrations));
 		}
 
 		private void configureCreateSchemas(FluentConfiguration configuration, boolean createSchemas) {
